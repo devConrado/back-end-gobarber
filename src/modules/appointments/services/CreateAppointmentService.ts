@@ -1,0 +1,41 @@
+import { startOfHour } from 'date-fns';
+import { inject, injectable } from 'tsyringe';
+import Appointment from '@modules/appointments/infra/typeorm/entities/Appointment';
+import AppError from '@shared/errors/AppError';
+import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
+
+interface IRequest {
+  provider_id: string;
+  date: Date;
+}
+// Dependency Inversion (SOLID) -> conceito de injeção de dependencia
+@injectable()
+class CreateAppointmentSerice {
+  constructor(
+    @inject('AppointmentsRepository')
+    private appointmentsRepository: IAppointmentsRepository,
+  ) {}
+
+  public async execute({ provider_id, date }: IRequest): Promise<Appointment> {
+    const appointmentDate = startOfHour(date);
+
+    const findAppointmentInSameDate = await this.appointmentsRepository.findByDate(
+      appointmentDate,
+    );
+
+    if (findAppointmentInSameDate) {
+      throw new AppError('This appointment is alredy booked');
+    }
+
+    const appointment = await this.appointmentsRepository.create({
+      provider_id,
+      date: appointmentDate,
+    });
+
+    return appointment;
+  }
+}
+
+export default CreateAppointmentSerice;
+
+// Service nunca recebe request e nem response do express
