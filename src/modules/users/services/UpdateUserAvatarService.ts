@@ -5,7 +5,7 @@ import User from '@modules/users/infra/typeorm/entities/User';
 import uploadConfig from '@config/upload';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
-import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider'
+import IStorageProvider from '@shared/container/providers/StorageProvider/models/IStorageProvider';
 
 interface IRequest {
   user_id: string;
@@ -17,7 +17,7 @@ class UpdateUserAvatarService {
     @inject('UsersRepository')
     private usersRepository: IUsersRepository,
 
-    @inject('StorageProvider') 
+    @inject('StorageProvider')
     private storageProvider: IStorageProvider,
   ) {}
 
@@ -29,10 +29,10 @@ class UpdateUserAvatarService {
     }
 
     if (user.avatar) {
-      await this.storageProvider.deleteFile(user.avatar)
+      await this.storageProvider.deleteFile(user.avatar);
     }
-    
-    const filename = await this.storageProvider.saveFile(avatarFileName)
+
+    const filename = await this.storageProvider.saveFile(avatarFileName);
 
     user.avatar = filename;
 
