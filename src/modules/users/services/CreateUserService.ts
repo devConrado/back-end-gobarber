@@ -1,8 +1,8 @@
-import IHashProvider from '../providers/HashProvider/models/IHashProvider'
 import { inject, injectable } from 'tsyringe';
 import User from '@modules/users/infra/typeorm/entities/User';
 import AppError from '@shared/errors/AppError';
 import IUsersRepository from '@modules/users/repositories/IUsersRepository';
+import IHashProvider from '../providers/HashProvider/models/IHashProvider';
 
 interface IRequest {
   name: string;
@@ -12,11 +12,11 @@ interface IRequest {
 @injectable()
 class CreateUserService {
   constructor(
-    @inject('Usersrepository') 
+    @inject('UsersRepository')
     private usersRepository: IUsersRepository,
-    
+
     @inject('HashProvider')
-    private hashProvider: IHashProvider
+    private hashProvider: IHashProvider,
   ) {}
 
   public async execute({ name, email, password }: IRequest): Promise<User> {
